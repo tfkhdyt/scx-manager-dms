@@ -27,9 +27,11 @@ PluginComponent {
     property string selectedMode: "Auto"
     property int selectedModeIndex: 0
 
-    property bool usePkexec: pluginData.usePkexec === true
-    property int refreshIntervalSec: {
-        const raw = pluginData.refreshInterval
+    property int refreshIntervalSec: 5
+    property string _procScope: ""
+
+    function computeRefreshInterval() {
+        const raw = pluginData?.refreshInterval
         if (raw === undefined || raw === null || raw === "")
             return 5
         const parsed = parseInt(raw, 10)
@@ -37,7 +39,8 @@ PluginComponent {
             return 5
         return Math.max(2, Math.min(60, parsed))
     }
-    property string _procScope: ""
+
+    onPluginDataChanged: refreshIntervalSec = computeRefreshInterval()
 
     readonly property var schedulerOptions: ScxUtils.schedDisplayOptions(availableSchedulers)
     readonly property var modeOptions: ScxUtils.modeLabels()
@@ -63,14 +66,8 @@ PluginComponent {
 
     onCcWidgetToggled: {}
 
-    function buildCommand(args) {
-        if (usePkexec)
-            return ["pkexec", "scxctl"].concat(args)
-        return ["scxctl"].concat(args)
-    }
-
     function runScxctl(action, args, callback) {
-        var command = buildCommand(args)
+        var command = ["scxctl"].concat(args)
         Proc.runCommand(_procScope + "." + action, ["sh", "-c", command.map(function (part) {
             return "'" + String(part).replace(/'/g, "'\\''") + "'"
         }).join(" ") + " 2>&1"], callback, 0)
@@ -222,6 +219,7 @@ PluginComponent {
 
     Component.onCompleted: {
         _procScope = "scxManager." + Math.floor(Math.random() * 1e9)
+        refreshIntervalSec = computeRefreshInterval()
         refreshAll()
     }
 
