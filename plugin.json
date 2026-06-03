@@ -1,0 +1,15 @@
+{
+  "id": "scxManager",
+  "name": "Scx Manager",
+  "description": "Manage sched-ext scheduler and profile via scxctl",
+  "version": "0.0.1",
+  "author": "tfkhdyt",
+  "type": "widget",
+  "capabilities": ["control-center", "sched-ext"],
+  "component": "./ScxManagerWidget.qml",
+  "icon": "speed",
+  "settings": "./ScxManagerSettings.qml",
+  "requires": ["scxctl"],
+  "requires_dms": ">=1.2.0",
+  "permissions": ["settings_read", "settings_write", "process"]
+}
