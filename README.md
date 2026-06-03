@@ -49,12 +49,33 @@ scxctl list
 scxctl get
 ```
 
+### Optional: polkit rules (passwordless scheduler control)
+
+By default, `scx_loader` may require authentication for scheduler changes. To allow members of the `wheel` group to manage schedulers without a password prompt, create a polkit rule:
+
+```bash
+sudo nano /etc/polkit-1/rules.d/50-scx-loader.rules
+```
+
+```javascript
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.scx.loader.manage-schedulers" &&
+        subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});
+```
+
+```bash
+systemctl restart polkit
+```
+
 ## Installation
 
-1. Copy this directory to your DMS plugins folder:
+1. Clone the repository directly into your DMS plugins folder:
 
    ```bash
-   cp -r scxManager ~/.config/DankMaterialShell/plugins/
+   git clone https://github.com/tfkhdyt/scxManager ~/.config/DankMaterialShell/plugins/scxManager
    ```
 
 2. Open **Settings → Plugins**
@@ -128,7 +149,7 @@ systemctl status scx_loader.service
 
 ### Commands fail with permission errors
 
-Configure polkit rules so your user can talk to `org.scx.Loader` without a password prompt.
+Set up polkit rules as described in the [Optional: polkit rules](#optional-polkit-rules-passwordless-scheduler-control) section above.
 
 ### Scheduler list is empty
 
