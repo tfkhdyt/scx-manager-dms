@@ -300,7 +300,7 @@ PluginComponent {
                 DankDropdown {
                     width: parent.width
                     dropdownWidth: parent.width
-                    maxPopupHeight: 360
+                    maxPopupHeight: 200
                     currentValue: root.selectedSchedDisplay
                     options: root.schedulerOptions
                     enabled: root.serviceAvailable && !root.loading && root.schedulerOptions.length > 0
