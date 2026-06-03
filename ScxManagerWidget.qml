@@ -62,7 +62,7 @@ PluginComponent {
         return currentSchedDisplay + " · " + currentMode
     }
     ccWidgetIsActive: isRunning && serviceAvailable
-    ccDetailHeight: 290
+    ccDetailHeight: 240
 
     onCcWidgetToggled: {}
 
@@ -202,13 +202,6 @@ PluginComponent {
         })
     }
 
-    function restoreDefault() {
-        loading = true
-        runScxctl("scxManager.restore", ["restore"], function (output, exitCode) {
-            handleMutationResult(output, exitCode, I18n.tr("Default scheduler restored", "Scx Manager success after restore"))
-        })
-    }
-
     Timer {
         id: refreshTimer
         interval: Math.max(2, root.refreshIntervalSec) * 1000
@@ -300,7 +293,8 @@ PluginComponent {
                 DankDropdown {
                     width: parent.width
                     dropdownWidth: parent.width
-                    maxPopupHeight: 200
+                    maxPopupHeight: 360
+                    openUpwards: true
                     currentValue: root.selectedSchedDisplay
                     options: root.schedulerOptions
                     enabled: root.serviceAvailable && !root.loading && root.schedulerOptions.length > 0
@@ -340,7 +334,7 @@ PluginComponent {
 
             GridLayout {
                 width: parent.width
-                columns: 2
+                columns: 3
                 columnSpacing: Theme.spacingS
                 rowSpacing: Theme.spacingS
                 visible: root.serviceAvailable
@@ -438,32 +432,6 @@ PluginComponent {
                     }
                 }
 
-                StyledRect {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 36
-                    radius: Theme.cornerRadius
-                    color: restoreMouse.containsMouse ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.16) : Theme.floatingSurface
-                    border.color: Theme.outlineStrong
-                    border.width: 1
-                    opacity: !root.loading ? 1 : 0.45
-
-                    StyledText {
-                        anchors.centerIn: parent
-                        text: I18n.tr("Restore default", "Scx Manager restore boot default scheduler button")
-                        font.pixelSize: Theme.fontSizeMedium
-                        font.weight: Font.Medium
-                        color: Theme.surfaceText
-                    }
-
-                    MouseArea {
-                        id: restoreMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        enabled: !root.loading
-                        onClicked: root.restoreDefault()
-                    }
-                }
             }
 
         }
